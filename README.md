@@ -2,6 +2,21 @@
 
 This is a command-line tool that extracts and logs information belonging to all [UDP, TCP] streams from a given Wireshark pcap file. It utilizes the Tshark tool to process the pcap file and generate separate log files for each TCP stream found.
 
+# Usage
+```
+Usage: /usr/local/bin/wshark_read_streams [capture.pcap] [udp|tcp] [options] ...
+Options:
+    -h, --help            Show this help
+    -s, --select [list]   Select streams to process
+    -o, --output [path]   Output path to store the folder with the stream logs. Default is the current directory
+
+Examples:
+    /usr/local/bin/wshark_read_streams capture.pcap tcp
+    /usr/local/bin/wshark_read_streams capture.pcap tcp -s "1,2,3"
+    /usr/local/bin/wshark_read_streams capture.pcap tcp -s "2"
+    /usr/local/bin/wshark_read_streams capture.pcap tcp -o "/home/user/streams"
+```
+
 # Requirements
 - `tshark`: `Wireshark` includes `tshark`. Make sure to include it into your `PATH`.
   
