@@ -1,6 +1,9 @@
 #!/bin/bash
 
 function post_process () {
+  # This function removes the indicators for number of characters from
+  # the output of `tshark -nlr "$p_cap_file" -qz "follow,$protocol,ascii,$stream"`
+  # If you find a nicer way to remove this indicators please raise an issue.
   file_name=$1
   # Edit the file contents to remove first 6 lines and last line
   tail -n +7 $file_name | sed '$ d' > $file_name.tmp
