@@ -34,7 +34,7 @@ then
   echo "Reads a pcap file and extracts streams"
   echo "See https://github.com/marc-gav/Wireshark-dump-stream-info for more information"
   echo ""
-  echo "Usage: $0 [capture.pcap] [udp|tcp] [options] ..."
+  echo "Usage: wshark_read_streams [capture.pcap] [udp|tcp] [options] ..."
   echo "Options:"
   echo "    -h, --help            Show this help"
   echo "    -s, --select [list]   Select streams to process"
