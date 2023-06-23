@@ -18,15 +18,9 @@ Examples:
 ```
 
 # Installation
-```
-make
-```
-
-or
-
-```
-make install
-```
+1. `git clone git@github.com:marc-gav/Wireshark-log-stream-info.git --depth 1`
+2. `cd Wireshark-log-stream-info`
+3. `make` or `make install` # This will place a symbolic link of the bash script in /usr/local/bin
 
 # Requirements
 - `tshark`: `Wireshark` includes `tshark`. Make sure to include it into your `PATH`.
