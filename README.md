@@ -4,7 +4,7 @@ This is a command-line tool that extracts and logs information belonging to all 
 
 # Usage
 ```
-Usage: /usr/local/bin/wshark_read_streams [capture.pcap] [udp|tcp] [options] ...
+Usage: wshark_read_streams [capture.pcap] [udp|tcp] [options] ...
 Options:
     -h, --help            Show this help
     -s, --select [list]   Select streams to process
@@ -15,6 +15,17 @@ Examples:
     /usr/local/bin/wshark_read_streams capture.pcap tcp -s "1,2,3"
     /usr/local/bin/wshark_read_streams capture.pcap tcp -s "2"
     /usr/local/bin/wshark_read_streams capture.pcap tcp -o "/home/user/streams"
+```
+
+# Installation
+```
+make
+```
+
+or
+
+```
+make install
 ```
 
 # Requirements
