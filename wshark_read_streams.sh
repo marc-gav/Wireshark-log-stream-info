@@ -1,7 +1,32 @@
 #!/bin/bash
 
+function post_process () {
+  file_name=$1
+  # Edit the file contents to remove first 6 lines and last line
+  tail -n +7 $file_name | sed '$ d' > $file_name.tmp
+  
+  touch $file_name-bytes.tmp
+
+  while [ -s $file_name.tmp ]
+  do
+    bytes=$(head -n 1 $file_name.tmp)
+    tail -n +2 $file_name.tmp | head -c $bytes >> $file_name-bytes.tmp
+    tail -n +2 $file_name.tmp | tail -c +$((bytes+2)) > $file_name.tmp.tmp
+    mv $file_name.tmp.tmp $file_name.tmp
+  done
+
+  # include first 6 lines at the beginning and last line
+  head -n 6 $file_name > $file_name.tmp.tmp
+  printf "===================================================================\n" >> $file_name.tmp.tmp
+  cat $file_name-bytes.tmp >> $file_name.tmp.tmp
+  mv $file_name.tmp.tmp $file_name
+
+  rm $file_name.tmp
+  rm $file_name-bytes.tmp
+}
+
 ########################## Help message ##########################
-if [ $# -lt 2 ] || [ $1 == "-h" ] || [ $1 == "--help" ]
+if [ $# -lt 2 ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
   echo "Reads a pcap file and extracts streams"
   echo "See https://github.com/marc-gav/Wireshark-dump-stream-info for more information"
@@ -29,12 +54,10 @@ do
   case ${!i} in
       -s|--select)
         select=${!j}
-        echo "The stream selection has been modified to be: $select"
       ;;
       -o|--output)
         #j is the next argument
         output=${!j}
-        echo "The output path has been modified to be: $output"
       ;;
       *)
             # unknown option
@@ -44,7 +67,7 @@ done
 #################################################################
 
 ############################ Asserts ############################
-if [ ! -f $1 ] 
+if [ ! -f "$1" ] 
 then
   echo "File $1 does not exist"
   exit 1
@@ -78,10 +101,10 @@ mkdir $folder_name
 ## Get all streams ids
 if [ $protocol == "tcp" ]
 then
-  all_streams=$(tshark -nlr $p_cap_file -Y tcp.flags.syn==1 -T fields -e tcp.stream | sort -n | uniq)
+  all_streams=$(tshark -nlr "$p_cap_file" -Y tcp.flags.syn==1 -T fields -e tcp.stream | sort -n | uniq)
 elif [ $protocol == "udp" ]
 then
-  all_streams=$(tshark -nlr $p_cap_file -Y udp -T fields -e udp.stream | sort -n | uniq)
+  all_streams=$(tshark -nlr "$p_cap_file" -Y udp -T fields -e udp.stream | sort -n | uniq)
 else
   echo "Protocol $protocol not supported. Must be udp or tcp"
   exit 1
@@ -99,5 +122,6 @@ fi
 ## Extract streams and store them in the output folder
 for stream in $all_streams
 do
-  tshark -nlr $p_cap_file -qz "follow,$protocol,ascii,$stream" > $folder_name/stream-$stream.log
+  tshark -nlr "$p_cap_file" -qz "follow,$protocol,ascii,$stream" > $folder_name/stream-$stream.log
+  post_process $folder_name/stream-$stream.log
 done
